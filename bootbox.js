@@ -88,7 +88,11 @@
     // show the dialog immediately by default
     show: true,
     // dialog container
-    container: "body"
+    container: "body",
+    // boolean to know if the content come from ajax 
+    ajax : false,
+    // use if ajax = true , the result of ajaxurl will be the content.
+    ajaxurl : ""
   };
 
   // our public object; augmented after our private API
@@ -604,7 +608,26 @@
       callbacks[key] = button.callback;
     });
 
-    body.find(".bootbox-body").html(options.message);
+    if ( options.ajax)
+    {
+         $.ajax({
+       url : options.ajaxurl,
+       type : 'GET',
+       dataType : 'html', // On désire recevoir du HTML
+       success : function(code_html, statut){ // code_html contient le HTML renvoyé
+                body.find(".bootbox-body").html(code_html);         
+           },
+        error: function (jqXHR, exception) {
+          body.find(".bootbox-body").html("Ajax Error");         
+           
+          }
+        
+       });
+    }
+    else
+    {
+      body.find(".bootbox-body").html(options.message);
+    }
 
     if (options.animate === true) {
       dialog.addClass("fade");
